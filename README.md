@@ -9,7 +9,7 @@
 
 #### Step 1: Clone the project
 ```bash
-git clone
+git clone https://github.com/asenlog/url-shortener.git
 ```
 #### Step 2: Install Dependencies
 ```bash
@@ -34,7 +34,7 @@ Open on your Browser http://localhost:8080/swagger
 
 ### Application Design
  The Url Shortener is built using the Slim framework, managing project dependencies with composer and implementing the MVC and Strategy pattern. Dependency Injection (based on Pimple) has been used to manage the
- dependencies and lazy loading.
+ dependencies and lazy loading. The application is following PSR-2 coding standards.
  
  ### Application Structure
  ```bash
