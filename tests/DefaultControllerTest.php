@@ -8,9 +8,7 @@
 
 namespace Tests;
 
-use Tests\Functional\BaseTestCase;
-
-class DefaultControllerTestCase extends BaseTestCase
+class DefaultControllerTest extends BaseTestCase
 {
 
     /**
@@ -18,12 +16,23 @@ class DefaultControllerTestCase extends BaseTestCase
      */
     public function testShortenValidRequest()
     {
-        $mockedRes = '{"status":200,"longUrl":"http:\/\/www.example.com","shortUrl":"rebrand.ly\/wamrv"}';
         $parameters = ['url' => 'http://www.example.com', 'provider' => 'rebrandly'];
         $response = $this->runApp('POST', '/shorten', $parameters);
 
         $this->assertEquals(200, $response->getStatusCode());
-//        $this->assertContains($mockedRes, (string)$response->getBody());
+    }
+
+    /**
+     * Test invalid URI
+     */
+    public function testShortenInvalidURIRequest()
+    {
+        $parameters = ['url' => 'http://www.example.com', 'provider' => 'rebrandly'];
+        $response = $this->runApp('POST', '/short', $parameters);
+
+        $result = json_decode($response->getBody(), true);
+        $this->assertEquals(404, $response->getStatusCode());
+        //$this->assertSame('Route Not Found..', $result['message']);
     }
 
     /**
@@ -60,27 +69,5 @@ class DefaultControllerTestCase extends BaseTestCase
 
         $this->assertEquals(405, $response->getStatusCode());
     }
-
-//    /**
-//     * Test that the index route with optional name argument returns a rendered greeting
-//     */
-//    public function testGetHomepageWithGreeting()
-//    {
-//        $response = $this->runApp('GET', '/name');
-//
-//        $this->assertEquals(200, $response->getStatusCode());
-//        $this->assertContains('Hello name!', (string)$response->getBody());
-//    }
-//
-//    /**
-//     * Test that the index route won't accept a post request
-//     */
-//    public function testPostHomepageNotAllowed()
-//    {
-//        $response = $this->runApp('POST', '/', ['test']);
-//
-//        $this->assertEquals(200, $response->getStatusCode());
-//        $this->assertContains('Method not allowed', (string)$response->getBody());
-//    }
 
 }

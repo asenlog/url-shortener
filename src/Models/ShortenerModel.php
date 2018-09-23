@@ -47,7 +47,10 @@ class ShortenerModel
     public function getValidators()
     {
         $this->validators[Constants::PARAMETER_URL] = v::url();
-        $this->validators[Constants::PARAMETER_PROVIDER] = v::optional(v::alpha());
+        $this->validators[Constants::PARAMETER_PROVIDER] = v::optional(v::oneOf(
+            v::equals(Constants::PARAMETER_PROVIDER_BITLY),
+            v::equals(Constants::PARAMETER_PROVIDER_REBRANDLY)
+        ));
         return $this->validators;
     }
 

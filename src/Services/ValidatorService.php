@@ -29,8 +29,6 @@ class ValidatorService
          * Check if we have extra parameters.
          * Each parameter has a rule if they do not add up fail Validation.
          *
-         * Used to validate my parameter with annotations on the models
-         * which provides an annotation validating such issues.
          */
         if (count($params) != count($rules)) {
             $this->errors['parameterCount'] = Constants::ERROR_INVALID_PARAMETER;

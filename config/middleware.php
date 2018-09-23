@@ -16,9 +16,14 @@ use App\Constants\Constants;
 
 $app->add(function ($request, $response, $next) {
 
-    if (!strpos($request->getUri(), 'swagger')) {
+    if (strpos($request->getUri(), 'swagger')) {
+        $response = $next($request, $response);
+        return $response;
+    }
+
+    if (strpos($request->getUri(), 'shorten')) {
         $contentType = $request->getHeader('HTTP_CONTENT_TYPE');
-        if ($contentType[0] !== "application/x-www-form-urlencoded") {
+        if (($contentType[0] !== "application/x-www-form-urlencoded")) {
             return $response
                 ->withStatus(400)
                 ->withJson([
