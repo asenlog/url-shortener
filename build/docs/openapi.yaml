@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: Url Shortening API
+  description: A url shortening microservice.
+  version: 0.1.0
+servers:
+- url: http://localhost:8080/
+  description: Localhost Server
+paths:
+  /shorten:
+    post:
+      summary: Returns the shortened URL.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: Url to short
+                provider:
+                  type: string
+                  description: Provider to use (Default Bitly)
+              required:
+              - url
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: the HTTP Status Code.
+                  longUrl:
+                    type: string
+                    description: The original Url.
+                  shortUrl:
+                    type: string
+                    description: The shortened Url.
+        '400':
+          description: Bad request.
+        '404':
+          description: Route Not found.
+        '5XX':
+          description: Unexpected error.

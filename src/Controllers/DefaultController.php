@@ -73,4 +73,18 @@ class DefaultController
             ->withJson($res);
     }
 
+    /**
+     * Display the swagger.json file
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+
+    public function swagger($request, $response)
+    {
+        $str = file_get_contents(__DIR__ . '/../../build/docs/openapi.json');
+        return $response->withJson(json_decode($str));
+    }
+
 }

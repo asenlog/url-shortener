@@ -16,14 +16,16 @@ use App\Constants\Constants;
 
 $app->add(function ($request, $response, $next) {
 
-    $contentType = $request->getHeader('HTTP_CONTENT_TYPE');
-    if ($contentType[0] !== "application/x-www-form-urlencoded") {
-        return $response
-            ->withStatus(400)
-            ->withJson([
-                Constants::RESPONSE_STATUS => 400,
-                Constants::RESPONSE_MESSAGE => Constants::ERROR_BAD_REQUEST
-            ]);
+    if (!strpos($request->getUri(), 'swagger')) {
+        $contentType = $request->getHeader('HTTP_CONTENT_TYPE');
+        if ($contentType[0] !== "application/x-www-form-urlencoded") {
+            return $response
+                ->withStatus(400)
+                ->withJson([
+                    Constants::RESPONSE_STATUS => 400,
+                    Constants::RESPONSE_MESSAGE => Constants::ERROR_BAD_REQUEST
+                ]);
+        }
     }
 
     $response = $next($request, $response);

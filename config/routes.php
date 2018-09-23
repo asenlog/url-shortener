@@ -6,3 +6,4 @@ use Slim\Http\Response;
 
 // Routes
 $app->post('/shorten', DefaultController::class . ":shortUrl");
+$app->get('/swagger', DefaultController::class . ":swagger");

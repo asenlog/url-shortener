@@ -27,7 +27,7 @@ composer test
 composer start
 ```
 
-#### Step 2: Navigate to Project Description
+#### Step 2: Navigate to API Description (swagger.json)
 ```bash
 Open on your Browser http://localhost:8080/swagger
 ```

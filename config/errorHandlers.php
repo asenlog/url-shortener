@@ -11,7 +11,7 @@ $container['notFoundHandler'] = function ($c) {
             ->withStatus(404)
             ->withJson(array(
                 Constants::RESPONSE_STATUS => 404,
-                Constants::RESPONSE_MESSAGE => ERROR_NOT_FOUND
+                Constants::RESPONSE_MESSAGE => Constants::ERROR_NOT_FOUND
             ));
     };
 };
