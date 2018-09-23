@@ -36,7 +36,7 @@ $container['client'] = function () {
 /*
  * Bitly Provider
  */
-$container[BitlyProvider::class] = function ($c) {
+$container['bitly'] = function ($c) {
     $bitly = $c->get('settings')['bitly'];
     $client  = $c->get('client');
     return new BitlyProvider($bitly['token'], $bitly['url'], $client);
@@ -45,19 +45,10 @@ $container[BitlyProvider::class] = function ($c) {
 /*
  * Rebrandly Provider
  */
-$container[RebrandlyProvider::class] = function ($c) {
+$container['rebrandly'] = function ($c) {
     $rebrandly = $c->get('settings')['rebrandly'];
     $client  = $c->get('client');
     return new RebrandlyProvider($rebrandly['token'], $rebrandly['url'], $client);
-};
-
-/*
- * Registerd Providers  Injected in our Service to use
- */
-$container['providers'] = function ($c) {
-    $providers[] = $c->get(BitlyProvider::class);
-    $providers[] = $c->get(RebrandlyProvider::class);
-    return $providers;
 };
 
 /*
@@ -73,8 +64,7 @@ $container[ValidatorService::class] = function () {
  * to do the heavy lifting
  */
 $container[ShortUrlService::class] = function ($c) {
-    $providers = $c->get('providers');
-    return new ShortUrlService($providers);
+    return (new ShortUrlService($c, $c->get('request')))->setProvider();
 };
 
 /*

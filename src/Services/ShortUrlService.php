@@ -9,40 +9,48 @@
 namespace App\Services;
 
 use App\Constants\Constants;
+use App\Interfaces\ProviderInterface;
+use App\Providers\RebrandlyProvider;
+use Pimple\Container;
+
+use Psr\Container\ContainerInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class ShortUrlService
 {
-    private $providers;
+    private $provider;
+    private $container;
+    private $request;
 
     /**
      * ShortUrlService constructor.
      *
-     * @param array $providers (Injected from the dependencies)
+     * @param ContainerInterface $container
+     * @param Request $request
      */
-    public function __construct(array $providers)
+    public function __construct(ContainerInterface $container, Request $request)
     {
-        $this->providers = $providers;
+        $this->container = $container;
+        $this->request = $request;
     }
 
     /**
-     * The original idea here was to use the Strategy Pattern with each of the providers
-     * registering themselves in the container by implementing the Pimple/ServiceProviderInterface
-     * and the loop over here deciding which provider to use during runtime.
+     * The original idea here was to use the Strategy Pattern with the Service
+     * registering the provider in the container by implementing the Pimple/ServiceProviderInterface
      *
      * Due to lack of time and a bit of poor documentation on Pimple and Slim, i have registered
-     * the providers in the container in the dependencies.php and injecting them here to get them.
+     * the providers in the container using the setProvider() method for switching at runtime.
+     */
+
+    /**
+     * Set services on the given container.
      *
-     * @param $parameters
      * @return mixed
      */
-    public function shortUrl($parameters)
+    public function setProvider()
     {
-        foreach ($this->providers as $provider) {
-            if ($provider->isRequestedProvider($parameters[Constants::PARAMETER_PROVIDER])) {
-                $provider->doShort($parameters[Constants::PARAMETER_URL]);
-                return $provider->getResponse();
-            }
-        }
+        $provider = $this->request->getParsedBodyParam('provider', Constants::PARAMETER_PROVIDER_BITLY);
+        return $this->provider = $this->container->get($provider);
     }
-
 }

@@ -17,7 +17,6 @@ class BitlyProvider implements ProviderInterface
 {
     private $providerToken;
     private $providerUrl;
-    private $providerName = 'bitly';
     private $client;
     private $res;
 
@@ -29,18 +28,6 @@ class BitlyProvider implements ProviderInterface
     }
 
     /**
-     * Used to select Provider during runtime
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function isRequestedProvider(string $name)
-    {
-        return $this->providerName === $name;
-    }
-
-
-    /**
      * Gets the url and issues the request to the provider.
      *
      * @param string $longUrl
@@ -48,6 +35,7 @@ class BitlyProvider implements ProviderInterface
      */
     public function doShort(string $longUrl)
     {
+
         try {
             $this->res = $this->client->request('POST', $this->providerUrl, [
                 'headers' => [
@@ -63,6 +51,7 @@ class BitlyProvider implements ProviderInterface
              * Guzzle allows us to handle ALL sorts of Exceptions
              * but this error handling created for demo purposes.
              */
+
             $this->res = [
                 Constants::RESPONSE_STATUS => 503,
                 Constants::RESPONSE_MESSAGE => Constants::ERROR_SERVICE_UNAVAILABLE

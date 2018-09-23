@@ -9,8 +9,8 @@
 namespace App\Controllers;
 
 use App\Constants\Constants;
+use App\Interfaces\ProviderInterface;
 use App\Models\ShortenerModel;
-use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 
 use Slim\Http\Request;
@@ -19,14 +19,14 @@ use Slim\Http\Response;
 class DefaultController
 {
     private $validator;
-    private $shortUrlService;
+    private $provider;
 
     public function __construct(
         ValidatorService $validator,
-        ShortUrlService $shortUrlService
+        ProviderInterface $provider
     ) {
         $this->validator = $validator;
-        $this->shortUrlService = $shortUrlService;
+        $this->provider = $provider;
     }
 
     /**
@@ -40,6 +40,8 @@ class DefaultController
          * Validate Incoming Data
          * Header Validation is happening on the middleware.
          * Just for demonstration purposes decided the split them up.
+         *
+         * Validation rules live inside the model.
          */
         $shortenerModel = new ShortenerModel();
         foreach ($request->getParsedBody() as $key => $value) {
@@ -63,7 +65,8 @@ class DefaultController
         /*
          * Call the Service to do the heavy lifting
          */
-        $res = $this->shortUrlService->shortUrl($shortenerModel->getParameters());
+        $this->provider->doShort($request->getParsedBodyParam('url'));
+        $res = $this->provider->getResponse();
 
         /*
          * Return the response
@@ -80,7 +83,6 @@ class DefaultController
      * @param Response $response
      * @return Response
      */
-
     public function swagger($request, $response)
     {
         $str = file_get_contents(__DIR__ . '/../../build/docs/openapi.json');

@@ -16,7 +16,6 @@ class RebrandlyProvider implements ProviderInterface
 {
     private $providerToken;
     private $providerUrl;
-    private $providerName = 'rebrandly';
     private $client;
     private $res;
 
@@ -25,17 +24,6 @@ class RebrandlyProvider implements ProviderInterface
         $this->providerToken = $providerToken;
         $this->providerUrl = $providerUrl;
         $this->client = $client;
-    }
-
-    /**
-     * Used to select Provider during runtime
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function isRequestedProvider(string $name)
-    {
-            return $this->providerName === $name;
     }
 
     /**
@@ -67,7 +55,6 @@ class RebrandlyProvider implements ProviderInterface
             ];
         }
     }
-
 
     /**
      * Handle the response coming from the provider.
