@@ -11,31 +11,25 @@ use App\Constants\Constants;
 use App\Interfaces\ProviderInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class RebrandlyProvider implements ProviderInterface
 {
     private $providerToken;
     private $providerUrl;
-    private $providerName = 'rebrandly';
     private $client;
-    private $res;
+    private $cache;
 
-    public function __construct(string $providerToken, string $providerUrl, ClientInterface $client)
-    {
+    public function __construct(
+        string $providerToken,
+        string $providerUrl,
+        ClientInterface $client,
+        FilesystemAdapter $cache
+    ) {
         $this->providerToken = $providerToken;
         $this->providerUrl = $providerUrl;
         $this->client = $client;
-    }
-
-    /**
-     * Used to select Provider during runtime
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function isRequestedProvider(string $name)
-    {
-            return $this->providerName === $name;
+        $this->cache = $cache;
     }
 
     /**
@@ -46,8 +40,14 @@ class RebrandlyProvider implements ProviderInterface
      */
     public function doShort(string $longUrl)
     {
+        // Check the cache first
+        if ($this->cache->hasItem('rebrand_' . urlencode($longUrl))) {
+            $res = $this->cache->getItem('rebrand_' . urlencode($longUrl));
+            return $res->get();
+        }
+
         try {
-            $this->res = $this->client->request('POST', $this->providerUrl, [
+            $res = $this->client->request('POST', $this->providerUrl, [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'apiKey' => $this->providerToken
@@ -56,42 +56,36 @@ class RebrandlyProvider implements ProviderInterface
                     "destination" => $longUrl
                 ]
             ]);
+
+            /**
+             * Prepare the response
+             */
+            $res = json_decode($res->getBody()->getContents(), true);
+            $res = [
+                Constants::RESPONSE_STATUS => 200,
+                Constants::RESPONSE_LONG_URL => $res['destination'],
+                Constants::RESPONSE_SHORT_URL => $res['shortUrl'],
+            ];
+
+            /**
+             * Save to cache
+             */
+            $rebrandCache = $this->cache->getItem('rebrand_' . urlencode($longUrl));
+            if (!$rebrandCache->isHit()) {
+                $rebrandCache->set($res);
+                $this->cache->save($rebrandCache);
+            }
+
+            return $res;
         } catch (\Exception $e) {
             /*
              * Guzzle allows us to handle ALL sorts of Exceptions
              * but this error handling created for demo purposes.
              */
-            $this->res = [
+            return [
                 Constants::RESPONSE_STATUS => 503,
                 Constants::RESPONSE_MESSAGE => Constants::ERROR_SERVICE_UNAVAILABLE
             ];
         }
-    }
-
-
-    /**
-     * Handle the response coming from the provider.
-     * @return array|mixed
-     */
-    public function getResponse()
-    {
-        /**
-         * means we have an exception on the request
-         * because Guzzle responds with an object
-         */
-        if (is_array($this->res)) {
-            return $this->res;
-        }
-
-        /**
-         * Handle the response for this provider
-         */
-        $res = json_decode($this->res->getBody()->getContents(), true);
-        $res = [
-            Constants::RESPONSE_STATUS => 200,
-            Constants::RESPONSE_LONG_URL => $res['destination'],
-            Constants::RESPONSE_SHORT_URL => $res['shortUrl'],
-        ];
-        return $res;
     }
 }

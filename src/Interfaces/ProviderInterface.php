@@ -10,9 +10,5 @@ namespace App\Interfaces;
 
 interface ProviderInterface
 {
-    public function isRequestedProvider(string $name);
-
     public function doShort(string $longUrl);
-
-    public function getResponse();
 }

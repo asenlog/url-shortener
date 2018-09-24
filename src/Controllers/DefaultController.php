@@ -9,8 +9,8 @@
 namespace App\Controllers;
 
 use App\Constants\Constants;
+use App\Interfaces\ProviderInterface;
 use App\Models\ShortenerModel;
-use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 
 use Slim\Http\Request;
@@ -18,15 +18,11 @@ use Slim\Http\Response;
 
 class DefaultController
 {
-    private $validator;
-    private $shortUrlService;
+    private $provider;
 
-    public function __construct(
-        ValidatorService $validator,
-        ShortUrlService $shortUrlService
-    ) {
-        $this->validator = $validator;
-        $this->shortUrlService = $shortUrlService;
+    public function __construct(ProviderInterface $provider)
+    {
+        $this->provider = $provider;
     }
 
     /**
@@ -37,33 +33,16 @@ class DefaultController
     public function shortUrl($request, $response)
     {
         /*
-         * Validate Incoming Data
-         * Header Validation is happening on the middleware.
-         * Just for demonstration purposes decided the split them up.
+         * Validation of Incoming Data is taking
+         * place in the middleware.
+         *
+         * Validation rules live inside the model.
          */
-        $shortenerModel = new ShortenerModel();
-        foreach ($request->getParsedBody() as $key => $value) {
-            $shortenerModel->setParameters($key, $value);
-        }
-
-        $validator = $this->validator->validate(
-            $shortenerModel->getParameters(),
-            $shortenerModel->getValidators()
-        );
-
-        if ($validator->failed()) {
-            return $response
-                ->withStatus(400)
-                ->withJson([
-                    Constants::RESPONSE_STATUS => 400,
-                    Constants::RESPONSE_MESSAGE => Constants::ERROR_INVALID_PARAMETER
-                ]);
-        }
 
         /*
-         * Call the Service to do the heavy lifting
+         * Call the Provider to do the heavy lifting
          */
-        $res = $this->shortUrlService->shortUrl($shortenerModel->getParameters());
+        $res = $this->provider->doShort($request->getParsedBodyParam('url'));
 
         /*
          * Return the response
@@ -72,19 +51,4 @@ class DefaultController
             ->withStatus($res[Constants::RESPONSE_STATUS])
             ->withJson($res);
     }
-
-    /**
-     * Display the swagger.json file
-     *
-     * @param Request $request
-     * @param Response $response
-     * @return Response
-     */
-
-    public function swagger($request, $response)
-    {
-        $str = file_get_contents(__DIR__ . '/../../build/docs/openapi.json');
-        return $response->withJson(json_decode($str));
-    }
-
 }

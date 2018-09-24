@@ -1,12 +1,14 @@
 <?php
 // DIC configuration
+use App\CacheProviders\FileCacheProvider;
 use App\Controllers\DefaultController;
 use App\Providers\BitlyProvider;
 use App\Providers\RebrandlyProvider;
+use App\Services\CacheService;
 use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 use GuzzleHttp\Client;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 $container = $app->getContainer();
 
@@ -20,10 +22,11 @@ $container['logger'] = function ($c) {
 };
 
 /*
- * Symfony Cache Client
+ * Cache Service
  */
-$container['cache'] = function () {
-    return new FilesystemCache();
+$container['cache'] = function ($c) {
+    $settings = $c->get('settings')['fileAdapterCache'];
+    return new FilesystemAdapter($settings['namespace'], $settings['expires'], $settings['dir']);
 };
 
 /*
@@ -36,28 +39,21 @@ $container['client'] = function () {
 /*
  * Bitly Provider
  */
-$container[BitlyProvider::class] = function ($c) {
+$container['bitly'] = function ($c) {
     $bitly = $c->get('settings')['bitly'];
     $client  = $c->get('client');
-    return new BitlyProvider($bitly['token'], $bitly['url'], $client);
+    $cache = $c->get('cache');
+    return new BitlyProvider($bitly['token'], $bitly['url'], $client, $cache);
 };
 
 /*
  * Rebrandly Provider
  */
-$container[RebrandlyProvider::class] = function ($c) {
+$container['rebrandly'] = function ($c) {
     $rebrandly = $c->get('settings')['rebrandly'];
     $client  = $c->get('client');
-    return new RebrandlyProvider($rebrandly['token'], $rebrandly['url'], $client);
-};
-
-/*
- * Registerd Providers  Injected in our Service to use
- */
-$container['providers'] = function ($c) {
-    $providers[] = $c->get(BitlyProvider::class);
-    $providers[] = $c->get(RebrandlyProvider::class);
-    return $providers;
+    $cache = $c->get('cache');
+    return new RebrandlyProvider($rebrandly['token'], $rebrandly['url'], $client, $cache);
 };
 
 /*
@@ -73,21 +69,13 @@ $container[ValidatorService::class] = function () {
  * to do the heavy lifting
  */
 $container[ShortUrlService::class] = function ($c) {
-    $providers = $c->get('providers');
-    return new ShortUrlService($providers);
+    return (new ShortUrlService($c, $c->get('request')))->setProvider();
 };
 
 /*
  * Default Controller to handle the requests
  */
 $container[DefaultController::class] = function ($c) {
-    $validator  = $c->get(ValidatorService::class);
     $shortService  = $c->get(ShortUrlService::class);
-    return new DefaultController($validator, $shortService);
+    return new DefaultController($shortService);
 };
-
-
-
-
-
-

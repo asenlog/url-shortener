@@ -17,7 +17,7 @@ class ValidatorService
 
     /**
      * Validation of the parameters based on the
-     * validation rules inside the model (App/Models/ShortenerModel)
+     * validation rules inside the model (App/Models/ShortenerModel) passing dynamically.
      *
      * @param array $params
      * @param array $rules

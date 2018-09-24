@@ -8,7 +8,6 @@
 
 namespace App\Interfaces;
 
-
 interface CacheInterface
 {
     public function write(string $key, $value);

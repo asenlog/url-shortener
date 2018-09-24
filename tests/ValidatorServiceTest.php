@@ -22,24 +22,43 @@ class ValidatorServiceTest extends BaseTestCase
         $this->model = new ShortenerModel();
     }
 
+    /**
+     * Check that the Validator works as expected
+     */
+
+    /**
+     * Test Valid rules
+     * @test
+     */
     public function testValidateValid()
     {
         $parameters = ['url' => 'http://www.example.com', 'provider' => 'rebrandly'];
         $this->validator->validate($parameters, $this->model->getValidators());
+
         $this->assertFalse($this->validator->failed());
     }
 
+    /**
+     * Test invalid rules -> Extra parameter
+     * @test
+     */
     public function testValidatorExtraParam()
     {
         $parameters = ['url' => 'http://www.example.com', 'provider' => 'bitly', 'test' => 1];
         $this->validator->validate($parameters, $this->model->getValidators());
+
         $this->assertTrue($this->validator->failed());
     }
 
+    /**
+     * Test invalid rules -> Wrong Provider Name
+     * @test
+     */
     public function testValidatorWrongProvider()
     {
         $parameters = ['url' => 'http://www.example.com', 'provider' => 'test'];
         $this->validator->validate($parameters, $this->model->getValidators());
+
         $this->assertTrue($this->validator->failed());
     }
 }

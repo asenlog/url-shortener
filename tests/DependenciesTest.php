@@ -11,14 +11,17 @@ namespace Tests;
 use App\Controllers\DefaultController;
 use App\Providers\BitlyProvider;
 use App\Providers\RebrandlyProvider;
-use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 use GuzzleHttp\ClientInterface;
 use Monolog\Logger;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class DependenciesTest extends BaseTestCase
 {
+    /**
+     * Check that the dependencies have been loaded in the container
+     */
+
     /**
      * @see Logger
      * @test
@@ -34,7 +37,7 @@ class DependenciesTest extends BaseTestCase
      */
     public function symfonyCacheAddedToContainer()
     {
-        $this->assertInstanceOf(FilesystemCache::class, $this->app->getContainer()->get('cache'));
+        $this->assertInstanceOf(FilesystemAdapter::class, $this->app->getContainer()->get('cache'));
     }
 
     /**
@@ -52,7 +55,7 @@ class DependenciesTest extends BaseTestCase
      */
     public function rebrandlyProviderAddedToContainer()
     {
-        $this->assertInstanceOf(RebrandlyProvider::class, $this->app->getContainer()->get(RebrandlyProvider::class));
+        $this->assertInstanceOf(RebrandlyProvider::class, $this->app->getContainer()->get('rebrandly'));
     }
 
     /**
@@ -61,7 +64,7 @@ class DependenciesTest extends BaseTestCase
      */
     public function bitlyProviderAddedToContainer()
     {
-        $this->assertInstanceOf(BitlyProvider::class, $this->app->getContainer()->get(BitlyProvider::class));
+        $this->assertInstanceOf(BitlyProvider::class, $this->app->getContainer()->get('bitly'));
     }
 
     /**
@@ -71,15 +74,6 @@ class DependenciesTest extends BaseTestCase
     public function validatorServiceAddedToContainer()
     {
         $this->assertInstanceOf(ValidatorService::class, $this->app->getContainer()->get(ValidatorService::class));
-    }
-
-    /**
-     * @see \App\Services\ShortUrlService
-     * @test
-     */
-    public function shortServiceAddedToContainer()
-    {
-        $this->assertInstanceOf(ShortUrlService::class, $this->app->getContainer()->get(ShortUrlService::class));
     }
 
     /**

@@ -58,7 +58,7 @@ class BaseTestCase extends TestCase
     }
 
     /**
-     * Process the application given a request method and URI
+     * Process the application given a request method, URI and Params
      *
      * @param string $requestMethod the request method (e.g. GET, POST, etc.)
      * @param string $requestUri the request URI
@@ -89,11 +89,12 @@ class BaseTestCase extends TestCase
 
         // Set up a response object
         $response = new Response();
-
+        // Set the request environment to container
+        $this->app->getContainer()['request'] = $request;
         // Process the application
         $response = $this->app->process($request, $response);
-
         // Return the response
+
         return $response;
     }
 }
