@@ -42,8 +42,7 @@ class DefaultController
         /*
          * Call the Provider to do the heavy lifting
          */
-        $this->provider->doShort($request->getParsedBodyParam('url'));
-        $res = $this->provider->getResponse();
+        $res = $this->provider->doShort($request->getParsedBodyParam('url'));
 
         /*
          * Return the response

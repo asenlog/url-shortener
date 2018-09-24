@@ -11,8 +11,11 @@ return [
             'level' => \Monolog\Logger::DEBUG,
         ],
 
-        'cache' => [
-
+        // Cache Settings
+        'fileAdapterCache' => [
+            'namespace' => 'api.fileAdapter.cache',
+            'expires' => '3600',  //1 hour,
+            'dir' =>  __DIR__ . '/../cache'
         ],
 
         // Rebrandly API Settings

@@ -12,19 +12,25 @@ use App\Constants\Constants;
 use App\Interfaces\ProviderInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class BitlyProvider implements ProviderInterface
 {
     private $providerToken;
     private $providerUrl;
     private $client;
-    private $res;
+    private $cache;
 
-    public function __construct(string $providerToken, string $providerUrl, ClientInterface $client)
-    {
+    public function __construct(
+        string $providerToken,
+        string $providerUrl,
+        ClientInterface $client,
+        FilesystemAdapter $cache
+    ) {
         $this->providerToken = $providerToken;
         $this->providerUrl = $providerUrl;
         $this->client = $client;
+        $this->cache = $cache;
     }
 
     /**
@@ -35,9 +41,14 @@ class BitlyProvider implements ProviderInterface
      */
     public function doShort(string $longUrl)
     {
+        // Check the cache first
+        if ($this->cache->hasItem('bitly_' . urlencode($longUrl))) {
+            $res = $this->cache->getItem('bitly_' . urlencode($longUrl));
+            return $res->get();
+        }
 
         try {
-            $this->res = $this->client->request('POST', $this->providerUrl, [
+            $res = $this->client->request('POST', $this->providerUrl, [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Authorization' => $this->providerToken,
@@ -46,42 +57,36 @@ class BitlyProvider implements ProviderInterface
                     "long_url" => $longUrl
                 ]
             ]);
+
+            /**
+             * Prepare the response
+             */
+            $res = json_decode($res->getBody()->getContents(), true);
+            $res = [
+                Constants::RESPONSE_STATUS => 200,
+                Constants::RESPONSE_LONG_URL => $res['long_url'],
+                Constants::RESPONSE_SHORT_URL => $res['link'],
+            ];
+
+            /**
+             * Save to cache
+             */
+            $bitlyCache = $this->cache->getItem('bitly_' . urlencode($longUrl));
+            if (!$bitlyCache->isHit()) {
+                $bitlyCache->set($res);
+                $this->cache->save($bitlyCache);
+            }
+
+            return $res;
         } catch (\Exception $e) {
             /**
              * Guzzle allows us to handle ALL sorts of Exceptions
              * but this error handling created for demo purposes.
              */
-
-            $this->res = [
+            return [
                 Constants::RESPONSE_STATUS => 503,
                 Constants::RESPONSE_MESSAGE => Constants::ERROR_SERVICE_UNAVAILABLE
             ];
         }
-    }
-
-    /**
-     * Handle the response coming from the provider.
-     * @return array|mixed
-     */
-    public function getResponse()
-    {
-        /**
-         * means we have an exception on the request
-         * because Guzzle responds with an object
-         */
-        if (is_array($this->res)) {
-            return $this->res;
-        }
-
-        /**
-         * Handle the response for this provider
-         */
-        $res = json_decode($this->res->getBody()->getContents(), true);
-        $res = [
-            Constants::RESPONSE_STATUS => 200,
-            Constants::RESPONSE_LONG_URL => $res['long_url'],
-            Constants::RESPONSE_SHORT_URL => $res['link'],
-        ];
-        return $res;
     }
 }
