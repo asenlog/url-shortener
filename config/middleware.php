@@ -14,11 +14,16 @@ use App\Constants\Constants;
 
 $validate = function ($request, $response, $next) {
     $contentType = $request->getHeader('HTTP_CONTENT_TYPE');
+    $parameters = $request->getParsedBody();
     $shortenerModel = new \App\Models\ShortenerModel();
     $validatorService = new \App\Services\ValidatorService();
 
+    if (isset($parameters[Constants::PARAMETER_PROVIDER]) && empty($parameters[Constants::PARAMETER_PROVIDER])) {
+        $parameters[Constants::PARAMETER_PROVIDER] = Constants::PARAMETER_PROVIDER_DEFAULT;
+    }
+
     $isValid = $validatorService->validate(
-        $request->getParsedBody(),
+        $parameters,
         $shortenerModel->getValidators()
     );
 

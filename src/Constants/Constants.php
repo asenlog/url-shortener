@@ -21,6 +21,7 @@ class Constants
     const PARAMETER_PROVIDER                    = 'provider';
     const PARAMETER_PROVIDER_REBRANDLY          = 'rebrandly';
     const PARAMETER_PROVIDER_BITLY              = 'bitly';
+    const PARAMETER_PROVIDER_DEFAULT            = 'bitly';
 
     // Response Text
     const RESPONSE_STATUS                       = 'status';

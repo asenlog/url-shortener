@@ -14,7 +14,6 @@ use Slim\Http\Request;
 
 class ShortUrlService
 {
-    private $provider;
     private $container;
     private $request;
 
@@ -45,7 +44,11 @@ class ShortUrlService
      */
     public function setProvider()
     {
-        $provider = $this->request->getParsedBodyParam('provider', Constants::PARAMETER_PROVIDER_BITLY);
-        return $this->provider = $this->container->get($provider);
+        // if provider comes empty set the default one
+        $provider = $this->request->getParsedBodyParam(Constants::PARAMETER_PROVIDER);
+        if (empty($provider)) {
+            $provider = Constants::PARAMETER_PROVIDER_DEFAULT;
+        }
+        return $this->container->get($provider);
     }
 }

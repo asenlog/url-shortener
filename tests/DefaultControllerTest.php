@@ -63,6 +63,19 @@ class DefaultControllerTest extends BaseTestCase
     }
 
     /**
+     * Test sending request with empty provider name
+     * @test
+     */
+    public function testShortenWithEmptyProviderName()
+    {
+        $parameters = ['url' => 'http://www.example.com', 'provider' => ''];
+        $response = $this->runApp('POST', '/shorten', $parameters);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains('bit.ly', (string)$response->getBody());
+    }
+
+    /**
      * Test sending request with extra parameter
      * @test
      */
