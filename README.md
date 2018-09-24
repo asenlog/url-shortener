@@ -54,9 +54,10 @@ Open on your Browser http://localhost:8080/swagger
  --- settings [Keeps all the projects settings.]
  - logs [Applications logs]
  - src
+ --- CacheProviders [Holds the Cache providers (For now only a File Cache Provider)]
  --- Constants [Holds all the Const Variables used across all the project as a central point of reference] 
  --- Controllers [Default Controller that holds the route]
- --- Interfaces [Interface Used for the Providers]
+ --- Interfaces [Interfaces Used for the Providers]
  --- Models [Model of the incoming request] 
  --- Providers [The 2 providers currently used Bitly and Rebrandly] 
  --- Services [Contains the Shortening Service and the Validator Service Used]
