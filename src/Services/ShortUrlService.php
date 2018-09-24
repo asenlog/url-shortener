@@ -9,13 +9,8 @@
 namespace App\Services;
 
 use App\Constants\Constants;
-use App\Interfaces\ProviderInterface;
-use App\Providers\RebrandlyProvider;
-use Pimple\Container;
-
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class ShortUrlService
 {
@@ -36,15 +31,15 @@ class ShortUrlService
     }
 
     /**
-     * The original idea here was to use the Strategy Pattern with the Service
+     * The original idea here was to use the Strategy Pattern with the ShortUrlService
      * registering the provider in the container by implementing the Pimple/ServiceProviderInterface
      *
-     * Due to lack of time and a bit of poor documentation on Pimple and Slim, i have registered
-     * the providers in the container using the setProvider() method for switching at runtime.
+     * Due poor documentation on Pimple and Slim and lack of time, i have registered
+     * the providers in the container using the setProvider() method for switching provider at runtime.
      */
 
     /**
-     * Set services on the given container.
+     * Set service on the container.
      *
      * @return mixed
      */

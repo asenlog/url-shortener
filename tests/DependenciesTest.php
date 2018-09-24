@@ -11,14 +11,17 @@ namespace Tests;
 use App\Controllers\DefaultController;
 use App\Providers\BitlyProvider;
 use App\Providers\RebrandlyProvider;
-use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 use GuzzleHttp\ClientInterface;
 use Monolog\Logger;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class DependenciesTest extends BaseTestCase
 {
+    /**
+     * Check that the dependencies have been loaded in the container
+     */
+
     /**
      * @see Logger
      * @test
@@ -34,7 +37,7 @@ class DependenciesTest extends BaseTestCase
      */
     public function symfonyCacheAddedToContainer()
     {
-        $this->assertInstanceOf(FilesystemCache::class, $this->app->getContainer()->get('cache'));
+        $this->assertInstanceOf(FilesystemAdapter::class, $this->app->getContainer()->get('cache'));
     }
 
     /**

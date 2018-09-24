@@ -16,27 +16,29 @@ class DefaultControllerTest extends BaseTestCase
      */
     public function testShortenValidRequest()
     {
-        $parameters = ['url' => 'http://www.example.com', 'provider' => 'rebrandly'];
+        $parameters = ['url' => 'http://www.example.com', 'provider' => 'bitly'];
         $response = $this->runApp('POST', '/shorten', $parameters);
 
         $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains('bit.ly', (string)$response->getBody());
     }
 
     /**
      * Test invalid URI
+     * @test
      */
     public function testShortenInvalidURIRequest()
     {
         $parameters = ['url' => 'http://www.example.com', 'provider' => 'rebrandly'];
         $response = $this->runApp('POST', '/short', $parameters);
 
-        $result = json_decode($response->getBody(), true);
         $this->assertEquals(404, $response->getStatusCode());
-        //$this->assertSame('Route Not Found..', $result['message']);
+        $this->assertContains('Not Found', (string)$response->getBody());
     }
 
     /**
      * Test sending request with missing parameter
+     * @test
      */
     public function testShortenWithMissingParameter()
     {
@@ -49,6 +51,7 @@ class DefaultControllerTest extends BaseTestCase
 
     /**
      * Test sending request with extra parameter
+     * @test
      */
     public function testShortenWithExtraParameter()
     {
@@ -61,6 +64,7 @@ class DefaultControllerTest extends BaseTestCase
 
     /**
      * Test sending request with not allowed method parameter
+     * @test
      */
     public function testShortenWithDisallowedMethod()
     {
@@ -68,6 +72,7 @@ class DefaultControllerTest extends BaseTestCase
         $response = $this->runApp('GET', '/shorten', $parameters);
 
         $this->assertEquals(405, $response->getStatusCode());
+        $this->assertContains('Method not allowed', (string)$response->getBody());
     }
 
 }

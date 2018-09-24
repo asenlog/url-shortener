@@ -11,6 +11,10 @@ return [
             'level' => \Monolog\Logger::DEBUG,
         ],
 
+        'cache' => [
+
+        ],
+
         // Rebrandly API Settings
         'rebrandly' => [
             'url' => 'https://api.rebrandly.com/v1/links',

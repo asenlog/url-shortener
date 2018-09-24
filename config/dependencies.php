@@ -6,7 +6,7 @@ use App\Providers\RebrandlyProvider;
 use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 use GuzzleHttp\Client;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 $container = $app->getContainer();
 
@@ -23,7 +23,7 @@ $container['logger'] = function ($c) {
  * Symfony Cache Client
  */
 $container['cache'] = function () {
-    return new FilesystemCache();
+    return new FilesystemAdapter();
 };
 
 /*
@@ -75,9 +75,3 @@ $container[DefaultController::class] = function ($c) {
     $shortService  = $c->get(ShortUrlService::class);
     return new DefaultController($validator, $shortService);
 };
-
-
-
-
-
-

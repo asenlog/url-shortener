@@ -54,6 +54,3 @@ Open on your Browser http://localhost:8080/swagger
  --- Services [Contains the Shortening Service and the Validator Service Used]
  - tests [Application Tests with PHPUnit] 
  ```
- 
-### Licence
-This package is released under the MIT License.
