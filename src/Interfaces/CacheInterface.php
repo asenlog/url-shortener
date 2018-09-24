@@ -10,7 +10,7 @@ namespace App\Interfaces;
 
 interface CacheInterface
 {
-    public function write(string $key, $value);
+    public function writeToCache(string $key, $value);
 
-    public function read(string $key);
+    public function readFromCache(string $key);
 }

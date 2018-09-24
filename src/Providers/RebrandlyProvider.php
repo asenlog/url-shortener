@@ -11,7 +11,7 @@ use App\Constants\Constants;
 use App\Interfaces\ProviderInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use App\CacheProviders\FileCacheProvider;
 
 class RebrandlyProvider implements ProviderInterface
 {
@@ -24,7 +24,7 @@ class RebrandlyProvider implements ProviderInterface
         string $providerToken,
         string $providerUrl,
         ClientInterface $client,
-        FilesystemAdapter $cache
+        FileCacheProvider $cache
     ) {
         $this->providerToken = $providerToken;
         $this->providerUrl = $providerUrl;
@@ -41,9 +41,9 @@ class RebrandlyProvider implements ProviderInterface
     public function doShort(string $longUrl)
     {
         // Check the cache first
-        if ($this->cache->hasItem('rebrand_' . urlencode($longUrl))) {
-            $res = $this->cache->getItem('rebrand_' . urlencode($longUrl));
-            return $res->get();
+        $item = $this->cache->readFromCache('rebrand_' . urlencode($longUrl));
+        if ($item) {
+            return $item;
         }
 
         try {
@@ -70,11 +70,7 @@ class RebrandlyProvider implements ProviderInterface
             /**
              * Save to cache
              */
-            $rebrandCache = $this->cache->getItem('rebrand_' . urlencode($longUrl));
-            if (!$rebrandCache->isHit()) {
-                $rebrandCache->set($res);
-                $this->cache->save($rebrandCache);
-            }
+            $this->cache->writeToCache('rebrand_' . urlencode($longUrl), $res);
 
             return $res;
         } catch (\Exception $e) {

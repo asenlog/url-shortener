@@ -26,7 +26,7 @@ $container['logger'] = function ($c) {
  */
 $container['cache'] = function ($c) {
     $settings = $c->get('settings')['fileAdapterCache'];
-    return new FilesystemAdapter($settings['namespace'], $settings['expires'], $settings['dir']);
+    return new FileCacheProvider($settings['namespace'], $settings['expires'], $settings['dir']);
 };
 
 /*
