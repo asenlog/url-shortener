@@ -13,33 +13,7 @@ use Respect\Validation\Validator as v;
 
 class ShortenerModel
 {
-    /**
-     * Set the Bitly provider as the default.
-     *
-     * @var array
-     */
-    protected $parameters = [
-        Constants::PARAMETER_PROVIDER => Constants::PARAMETER_PROVIDER_BITLY,
-    ];
-
     protected $validators;
-
-    /**
-     * @return array
-     */
-    public function getParameters()
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     */
-    public function setParameters($key, $value)
-    {
-        $this->parameters[$key] = $value;
-    }
 
     /**
      * @return array

@@ -46,7 +46,20 @@ class DefaultControllerTest extends BaseTestCase
         $response = $this->runApp('POST', '/shorten', $parameters);
 
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Invalid Parameter', (string)$response->getBody());
+        $this->assertContains('Bad Request', (string)$response->getBody());
+    }
+
+    /**
+     * Test sending request with wrong provider name
+     * @test
+     */
+    public function testShortenWithWrongProviderName()
+    {
+        $parameters = ['url' => 'http://www.example.com', 'provider' => 'bitly1234'];
+        $response = $this->runApp('POST', '/shorten', $parameters);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Bad Request', (string)$response->getBody());
     }
 
     /**
@@ -59,7 +72,7 @@ class DefaultControllerTest extends BaseTestCase
         $response = $this->runApp('POST', '/shorten', $parameters);
 
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Invalid Parameter', (string)$response->getBody());
+        $this->assertContains('Bad Request', (string)$response->getBody());
     }
 
     /**

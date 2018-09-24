@@ -18,14 +18,10 @@ use Slim\Http\Response;
 
 class DefaultController
 {
-    private $validator;
     private $provider;
 
-    public function __construct(
-        ValidatorService $validator,
-        ProviderInterface $provider
-    ) {
-        $this->validator = $validator;
+    public function __construct(ProviderInterface $provider)
+    {
         $this->provider = $provider;
     }
 
@@ -37,33 +33,14 @@ class DefaultController
     public function shortUrl($request, $response)
     {
         /*
-         * Validate Incoming Data
-         * Header Validation is happening on the middleware.
-         * Just for demonstration purposes decided the split them up.
+         * Validation of Incoming Data is taking
+         * place in the middleware.
          *
          * Validation rules live inside the model.
          */
-        $shortenerModel = new ShortenerModel();
-        foreach ($request->getParsedBody() as $key => $value) {
-            $shortenerModel->setParameters($key, $value);
-        }
-
-        $validator = $this->validator->validate(
-            $shortenerModel->getParameters(),
-            $shortenerModel->getValidators()
-        );
-
-        if ($validator->failed()) {
-            return $response
-                ->withStatus(400)
-                ->withJson([
-                    Constants::RESPONSE_STATUS => 400,
-                    Constants::RESPONSE_MESSAGE => Constants::ERROR_INVALID_PARAMETER
-                ]);
-        }
 
         /*
-         * Call the Service to do the heavy lifting
+         * Call the Provider to do the heavy lifting
          */
         $this->provider->doShort($request->getParsedBodyParam('url'));
         $res = $this->provider->getResponse();
@@ -75,17 +52,4 @@ class DefaultController
             ->withStatus($res[Constants::RESPONSE_STATUS])
             ->withJson($res);
     }
-
-    /**
-     * Display the swagger.json file
-     *
-     * @param Response $response
-     * @return Response
-     */
-    public function swagger($response)
-    {
-        $str = file_get_contents(__DIR__ . '/../../build/docs/openapi.json');
-        return $response->withJson(json_decode($str));
-    }
-
 }

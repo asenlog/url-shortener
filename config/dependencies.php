@@ -23,7 +23,7 @@ $container['logger'] = function ($c) {
  * Symfony Cache Client
  */
 $container['cache'] = function () {
-    return new FilesystemAdapter();
+    return new FilesystemAdapter('', 0, __DIR__ . '/../cache');
 };
 
 /*
@@ -71,7 +71,6 @@ $container[ShortUrlService::class] = function ($c) {
  * Default Controller to handle the requests
  */
 $container[DefaultController::class] = function ($c) {
-    $validator  = $c->get(ValidatorService::class);
     $shortService  = $c->get(ShortUrlService::class);
-    return new DefaultController($validator, $shortService);
+    return new DefaultController($shortService);
 };
