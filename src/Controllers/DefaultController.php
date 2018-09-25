@@ -10,8 +10,6 @@ namespace App\Controllers;
 
 use App\Constants\Constants;
 use App\Interfaces\ProviderInterface;
-use App\Models\ShortenerModel;
-use App\Services\ValidatorService;
 
 use Slim\Http\Request;
 use Slim\Http\Response;

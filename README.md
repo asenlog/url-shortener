@@ -1,4 +1,4 @@
-# Url Shortener based om Slim Framework 3
+# Url Shortener based on Slim Framework 3
 
 ## Prerequisites
 1. PHP >= 7.0

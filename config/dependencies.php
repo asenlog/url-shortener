@@ -8,7 +8,6 @@ use App\Services\CacheService;
 use App\Services\ShortUrlService;
 use App\Services\ValidatorService;
 use GuzzleHttp\Client;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 $container = $app->getContainer();
 

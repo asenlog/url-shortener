@@ -37,6 +37,7 @@ class BitlyProvider implements ProviderInterface
      * Gets the url and issues the request to the provider.
      *
      * @param string $longUrl
+     * @return array|mixed|null|\Psr\Http\Message\ResponseInterface
      * @throws Exception\GuzzleException
      */
     public function doShort(string $longUrl)
