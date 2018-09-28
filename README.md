@@ -3,7 +3,7 @@
 # Url Shortener based on Slim Framework 3
 
 ## Prerequisites
-1. PHP >= 7.0
+1. PHP >= 7.1
 2. Composer installed for managing PHP Dependencies
 3. Git for accessing GitHub
 
