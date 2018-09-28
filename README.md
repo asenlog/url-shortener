@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/asenlog/url-shortener.svg?token=rQq75cCxpo4Cxo6psy6T&branch=master)](https://travis-ci.com/asenlog/url-shortener)
+
 # Url Shortener based on Slim Framework 3
 
 ## Prerequisites
