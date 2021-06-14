@@ -21,13 +21,13 @@ return [
         // Rebrandly API Settings
         'rebrandly' => [
             'url' => 'https://api.rebrandly.com/v1/links',
-            'token' => '1977a75fd0a4401c914909505d2fe313'
+            'token' => ''
         ],
 
         // Bitly API Settings
         'bitly' => [
             'url' => 'https://api-ssl.bitly.com/v4/shorten',
-            'token' => 'Bearer 2dd5aa39f7cf3009aa1daa5f60fe9fc2691a9693'
+            'token' => ''
         ],
     ],
 ];
